@@ -1,6 +1,7 @@
 import cron from "node-cron";
 import { getRedis } from "../lib/redis";
 import { cronDailyCollect } from "../lib/env";
+import { getXCreators } from "../lib/data";
 import { reviewItems } from "../lib/seed";
 import { crawlXCreators } from "../lib/x-crawler";
 
@@ -22,8 +23,17 @@ async function runDailyCollect() {
   console.log(`[worker] collected ${nextItems.length} review items`);
 
   try {
-    const results = await crawlXCreators({ full: false });
-    const added = results.reduce((sum, result) => sum + result.added, 0);
+    const creators = await getXCreators();
+    const enabledCreators = creators.filter((creator) => creator.enabled);
+    let added = 0;
+
+    for (const creator of enabledCreators) {
+      const full = !creator.lastCrawledAt;
+      console.log(`[worker] x crawl @${creator.handle} mode=${full ? "full" : "incremental"}`);
+      const results = await crawlXCreators({ creatorId: creator.id, full });
+      added += results.reduce((sum, result) => sum + result.added, 0);
+    }
+
     console.log(`[worker] x crawl added ${added} review items`);
   } catch (error) {
     console.error("[worker] x crawl skipped", error);
@@ -34,8 +44,6 @@ async function main() {
   if (!cron.validate(cronDailyCollect)) {
     throw new Error(`Invalid CRON_DAILY_COLLECT: ${cronDailyCollect}`);
   }
-
-  await runDailyCollect();
 
   cron.schedule(cronDailyCollect, () => {
     runDailyCollect().catch((error) => {

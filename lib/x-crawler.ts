@@ -135,7 +135,7 @@ export async function crawlXCreators(options: { creatorId?: string; full?: boole
         });
       } catch (error) {
         nextCreators = nextCreators.map((item) =>
-          item.id === creator.id ? { ...item, lastCrawledAt: new Date().toISOString(), lastError: errorMessage(error) } : item
+          item.id === creator.id ? { ...item, lastError: errorMessage(error) } : item
         );
         results.push({ creatorId: creator.id, handle: creator.handle, added: 0, scanned: 0, error: errorMessage(error) });
         await options.onProgress?.({

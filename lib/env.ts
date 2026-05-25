@@ -8,7 +8,7 @@ export const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH || "";
 
 export const adminPassword = process.env.ADMIN_PASSWORD || "";
 
-export const cronDailyCollect = process.env.CRON_DAILY_COLLECT || "0 8 * * *";
+export const cronDailyCollect = process.env.CRON_DAILY_COLLECT || "0 2 * * *";
 
 export const baiduPushToken = process.env.BAIDU_PUSH_TOKEN || "";
 

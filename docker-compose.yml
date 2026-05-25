@@ -19,10 +19,9 @@ services:
     restart: unless-stopped
 
   worker:
-    profiles:
-      - worker
     build:
       context: .
+      dockerfile: Dockerfile.worker
     env_file:
       - .env
     environment:
@@ -31,7 +30,6 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-    command: ["npm", "run", "worker"]
     volumes:
       - ./data/uploads:/app/data/uploads
       - ./data/exports:/app/data/exports

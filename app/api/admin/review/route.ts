@@ -12,6 +12,7 @@ export async function POST(request: NextRequest) {
   const id = String(form.get("id") || "");
   const page = String(form.get("page") || "1");
   const pageSize = String(form.get("pageSize") || "10");
+  const filters = filtersFromForm(form);
 
   try {
     const reviewItems = await getReviewItems();
@@ -21,7 +22,7 @@ export async function POST(request: NextRequest) {
     if (action === "save") {
       const editedItem = await reviewItemFromForm(item, form);
       await saveReviewItems(reviewItems.map((reviewItem) => (reviewItem.id === id ? editedItem : reviewItem)));
-      return redirectToAdmin(reviewPath("saved", page, pageSize));
+      return redirectToAdmin(reviewPath("saved", page, pageSize, filters));
     }
 
     if (action === "approve") {
@@ -34,7 +35,7 @@ export async function POST(request: NextRequest) {
             reviewItem.id === id ? { ...editedItem, status: "approved", editedAt: new Date().toISOString() } : reviewItem
           )
         );
-        return redirectToAdmin(`/admin/resources?ok=resource-created&page=1&pageSize=20&edit=${encodeURIComponent(existingResource.id)}`);
+        return redirectToAdmin(reviewPath("approved", page, pageSize, filters));
       }
       const nextResource = resourceDraftFromReview(editedItem, resources);
       await saveResources([...resources, nextResource]);
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
           reviewItem.id === id ? { ...editedItem, status: "approved", editedAt: new Date().toISOString() } : reviewItem
         )
       );
-      return redirectToAdmin(`/admin/resources?ok=resource-created&page=1&pageSize=20&edit=${encodeURIComponent(nextResource.id)}`);
+      return redirectToAdmin(reviewPath("approved", page, pageSize, filters));
     }
 
     if (action === "reject" || action === "ignore") {
@@ -52,19 +53,45 @@ export async function POST(request: NextRequest) {
           reviewItem.id === id ? { ...reviewItem, status: action === "reject" ? "rejected" : "ignored" } : reviewItem
         )
       );
-      return redirectToAdmin(reviewPath(action, page, pageSize));
+      return redirectToAdmin(reviewPath(action, page, pageSize, filters));
     }
 
     throw new Error("未知审核操作。");
   } catch (error) {
-    return redirectToAdmin(`/admin/review?error=${encodeURIComponent(errorMessage(error))}`);
+    return redirectToAdmin(reviewPath("", page, pageSize, { ...filters, error: errorMessage(error) }));
   }
 }
 
-function reviewPath(ok: string, page: string, pageSize: string) {
+type ReviewFilters = {
+  startDate?: string;
+  endDate?: string;
+  status?: string;
+  creatorId?: string;
+  error?: string;
+};
+
+function filtersFromForm(form: FormData): ReviewFilters {
+  return {
+    startDate: String(form.get("startDate") || ""),
+    endDate: String(form.get("endDate") || ""),
+    status: String(form.get("status") || ""),
+    creatorId: String(form.get("creatorId") || "")
+  };
+}
+
+function reviewPath(ok: string, page: string, pageSize: string, filters: ReviewFilters = {}) {
   const safePage = Math.max(1, Number(page) || 1);
   const safePageSize = [10, 20, 50].includes(Number(pageSize)) ? Number(pageSize) : 10;
-  return `/admin/review?ok=${encodeURIComponent(ok)}&page=${safePage}&pageSize=${safePageSize}`;
+  const params = new URLSearchParams();
+  if (ok) params.set("ok", ok);
+  if (filters.error) params.set("error", filters.error);
+  params.set("page", String(safePage));
+  params.set("pageSize", String(safePageSize));
+  if (filters.startDate) params.set("startDate", filters.startDate);
+  if (filters.endDate) params.set("endDate", filters.endDate);
+  if (filters.status) params.set("status", filters.status);
+  if (filters.creatorId) params.set("creatorId", filters.creatorId);
+  return `/admin/review?${params.toString()}`;
 }
 
 async function reviewItemFromForm(item: ReviewItem, form: FormData): Promise<ReviewItem> {
