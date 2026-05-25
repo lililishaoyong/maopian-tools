@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { redirectToAdmin } from "@/lib/admin-redirect";
 import { assertUrl, getCategories, getResources, getReviewItems, newId, saveResources, saveReviewItems } from "@/lib/data";
 import type { Resource, ReviewItem } from "@/lib/types";
 
@@ -20,7 +21,7 @@ export async function POST(request: NextRequest) {
     if (action === "save") {
       const editedItem = await reviewItemFromForm(item, form);
       await saveReviewItems(reviewItems.map((reviewItem) => (reviewItem.id === id ? editedItem : reviewItem)));
-      return redirectTo(request, reviewPath("saved", page, pageSize));
+      return redirectToAdmin(reviewPath("saved", page, pageSize));
     }
 
     if (action === "approve") {
@@ -33,7 +34,7 @@ export async function POST(request: NextRequest) {
             reviewItem.id === id ? { ...editedItem, status: "approved", editedAt: new Date().toISOString() } : reviewItem
           )
         );
-        return redirectTo(request, `/admin/resources?ok=resource-created&page=1&pageSize=20&edit=${encodeURIComponent(existingResource.id)}`);
+        return redirectToAdmin(`/admin/resources?ok=resource-created&page=1&pageSize=20&edit=${encodeURIComponent(existingResource.id)}`);
       }
       const nextResource = resourceDraftFromReview(editedItem, resources);
       await saveResources([...resources, nextResource]);
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest) {
           reviewItem.id === id ? { ...editedItem, status: "approved", editedAt: new Date().toISOString() } : reviewItem
         )
       );
-      return redirectTo(request, `/admin/resources?ok=resource-created&page=1&pageSize=20&edit=${encodeURIComponent(nextResource.id)}`);
+      return redirectToAdmin(`/admin/resources?ok=resource-created&page=1&pageSize=20&edit=${encodeURIComponent(nextResource.id)}`);
     }
 
     if (action === "reject" || action === "ignore") {
@@ -51,12 +52,12 @@ export async function POST(request: NextRequest) {
           reviewItem.id === id ? { ...reviewItem, status: action === "reject" ? "rejected" : "ignored" } : reviewItem
         )
       );
-      return redirectTo(request, reviewPath(action, page, pageSize));
+      return redirectToAdmin(reviewPath(action, page, pageSize));
     }
 
     throw new Error("未知审核操作。");
   } catch (error) {
-    return redirectTo(request, `/admin/review?error=${encodeURIComponent(errorMessage(error))}`);
+    return redirectToAdmin(`/admin/review?error=${encodeURIComponent(errorMessage(error))}`);
   }
 }
 
@@ -146,10 +147,6 @@ function slugify(value: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "")
     .slice(0, 48) || "resource";
-}
-
-function redirectTo(request: NextRequest, path: string) {
-  return NextResponse.redirect(new URL(path, request.url));
 }
 
 function errorMessage(error: unknown) {

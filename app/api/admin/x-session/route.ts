@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { redirectToAdmin } from "@/lib/admin-redirect";
 import { saveXSession } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
@@ -11,7 +12,7 @@ export async function POST(request: NextRequest) {
   try {
     if (action === "clear") {
       await saveXSession({ cookieText: "", updatedAt: "", isConfigured: false });
-      return redirectTo(request, "/admin/creators?ok=session-cleared");
+      return redirectToAdmin("/admin/creators?ok=session-cleared");
     }
 
     const cookieText = String(form.get("cookieText") || "").trim();
@@ -24,14 +25,10 @@ export async function POST(request: NextRequest) {
       updatedAt: new Date().toISOString(),
       isConfigured: true
     });
-    return redirectTo(request, "/admin/creators?ok=session-saved");
+    return redirectToAdmin("/admin/creators?ok=session-saved");
   } catch (error) {
-    return redirectTo(request, `/admin/creators?error=${encodeURIComponent(errorMessage(error))}`);
+    return redirectToAdmin(`/admin/creators?error=${encodeURIComponent(errorMessage(error))}`);
   }
-}
-
-function redirectTo(request: NextRequest, path: string) {
-  return NextResponse.redirect(new URL(path, request.url));
 }
 
 function errorMessage(error: unknown) {

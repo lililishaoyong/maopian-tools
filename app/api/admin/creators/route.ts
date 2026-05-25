@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { redirectToAdmin } from "@/lib/admin-redirect";
 import { assertUrl, creatorHandleFromUrl, getXCreators, newId, saveXCreators } from "@/lib/data";
 import type { XCreatorSource } from "@/lib/types";
 
@@ -15,7 +16,7 @@ export async function POST(request: NextRequest) {
 
     if (action === "delete") {
       await saveXCreators(creators.filter((creator) => creator.id !== id));
-      return redirectTo(request, "/admin/creators?ok=deleted");
+      return redirectToAdmin("/admin/creators?ok=deleted");
     }
 
     const nextCreator = creatorFromForm(form);
@@ -30,9 +31,9 @@ export async function POST(request: NextRequest) {
       : [...creators, nextCreator];
 
     await saveXCreators(nextCreators);
-    return redirectTo(request, "/admin/creators?ok=saved");
+    return redirectToAdmin("/admin/creators?ok=saved");
   } catch (error) {
-    return redirectTo(request, `/admin/creators?error=${encodeURIComponent(errorMessage(error))}`);
+    return redirectToAdmin(`/admin/creators?error=${encodeURIComponent(errorMessage(error))}`);
   }
 }
 
@@ -54,10 +55,6 @@ function creatorFromForm(form: FormData): XCreatorSource {
     lastError: String(form.get("lastError") || ""),
     createdAt: now
   };
-}
-
-function redirectTo(request: NextRequest, path: string) {
-  return NextResponse.redirect(new URL(path, request.url));
 }
 
 function errorMessage(error: unknown) {

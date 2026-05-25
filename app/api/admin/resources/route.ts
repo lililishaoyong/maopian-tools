@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { redirectToAdmin } from "@/lib/admin-redirect";
 import {
   assertSlug,
   assertUrl,
@@ -25,7 +26,7 @@ export async function POST(request: NextRequest) {
     if (action === "delete") {
       const id = String(form.get("id") || "");
       await saveResources(resources.filter((resource) => resource.id !== id));
-      return redirectTo(request, resourcesPath("deleted", page, pageSize));
+      return redirectToAdmin(resourcesPath("deleted", page, pageSize));
     }
 
     const nextResource = await resourceFromForm(form);
@@ -40,9 +41,9 @@ export async function POST(request: NextRequest) {
       : [...resources, nextResource];
 
     await saveResources(nextResources);
-    return redirectTo(request, resourcesPath("saved", page, pageSize));
+    return redirectToAdmin(resourcesPath("saved", page, pageSize));
   } catch (error) {
-    return redirectTo(request, `${resourcesPath("", page, pageSize)}&error=${encodeURIComponent(errorMessage(error))}`);
+    return redirectToAdmin(`${resourcesPath("", page, pageSize)}&error=${encodeURIComponent(errorMessage(error))}`);
   }
 }
 
@@ -80,10 +81,6 @@ async function resourceFromForm(form: FormData): Promise<Resource> {
     isFeatured: form.get("isFeatured") === "on",
     updatedAt: new Date().toISOString().slice(0, 10)
   };
-}
-
-function redirectTo(request: NextRequest, path: string) {
-  return NextResponse.redirect(new URL(path, request.url));
 }
 
 function resourcesPath(ok: string, page: string, pageSize: string) {

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { redirectToAdmin } from "@/lib/admin-redirect";
 import { getXCrawlStatus, saveXCrawlStatus } from "@/lib/data";
 import type { XCrawlStatus } from "@/lib/types";
 import { crawlXCreators, getXCrawlProxyDiagnostic } from "@/lib/x-crawler";
@@ -22,7 +23,7 @@ export async function POST(request: NextRequest) {
     const proxyDiagnostic = getXCrawlProxyDiagnostic();
 
     if (activeJob || isFreshRunningStatus(current)) {
-      return redirectTo(request, "/admin/creators?ok=已有采集任务正在运行，请查看进度面板。");
+      return redirectToAdmin("/admin/creators?ok=已有采集任务正在运行，请查看进度面板。");
     }
 
     const initialStatus: XCrawlStatus = {
@@ -48,9 +49,9 @@ export async function POST(request: NextRequest) {
       activeJob = null;
     });
 
-    return redirectTo(request, "/admin/creators?ok=采集任务已启动，请查看进度面板。");
+    return redirectToAdmin("/admin/creators?ok=采集任务已启动，请查看进度面板。");
   } catch (error) {
-    return redirectTo(request, `/admin/creators?error=${encodeURIComponent(errorMessage(error))}`);
+    return redirectToAdmin(`/admin/creators?error=${encodeURIComponent(errorMessage(error))}`);
   }
 }
 
@@ -112,10 +113,6 @@ function isFreshRunningStatus(status: XCrawlStatus) {
   if (!status.running) return false;
   const updatedAt = status.updatedAt ? new Date(status.updatedAt).getTime() : 0;
   return Date.now() - updatedAt < 30 * 60 * 1000;
-}
-
-function redirectTo(request: NextRequest, path: string) {
-  return NextResponse.redirect(new URL(path, request.url));
 }
 
 function errorMessage(error: unknown) {

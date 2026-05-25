@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { redirectToAdmin } from "@/lib/admin-redirect";
 import { getSiteContent, saveSiteContent } from "@/lib/data";
 import type { SiteContent } from "@/lib/types";
 
@@ -30,18 +31,14 @@ export async function POST(request: NextRequest) {
     }
 
     await saveSiteContent(nextContent);
-    return redirectTo(request, "/admin/content?ok=saved");
+    return redirectToAdmin("/admin/content?ok=saved");
   } catch (error) {
-    return redirectTo(request, `/admin/content?error=${encodeURIComponent(errorMessage(error))}`);
+    return redirectToAdmin(`/admin/content?error=${encodeURIComponent(errorMessage(error))}`);
   }
 }
 
 function text(form: FormData, key: keyof SiteContent, fallback: string) {
   return String(form.get(key) || fallback).trim();
-}
-
-function redirectTo(request: NextRequest, path: string) {
-  return NextResponse.redirect(new URL(path, request.url));
 }
 
 function errorMessage(error: unknown) {

@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { redirectToAdmin } from "@/lib/admin-redirect";
 import { assertSlug, getCategories, getResources, newId, saveCategories } from "@/lib/data";
 import type { Category } from "@/lib/types";
 
@@ -20,7 +21,7 @@ export async function POST(request: NextRequest) {
         throw new Error("该分类下仍有资源，不能删除。");
       }
       await saveCategories(categories.filter((category) => category.id !== id));
-      return redirectTo(request, "/admin/categories?ok=deleted");
+      return redirectToAdmin("/admin/categories?ok=deleted");
     }
 
     const nextCategory = categoryFromForm(form);
@@ -35,10 +36,10 @@ export async function POST(request: NextRequest) {
       : [...categories, nextCategory];
 
     await saveCategories(nextCategories);
-    return redirectTo(request, "/admin/categories?ok=saved");
+    return redirectToAdmin("/admin/categories?ok=saved");
   } catch (error) {
     const editQuery = edit ? `&edit=${encodeURIComponent(edit)}` : "";
-    return redirectTo(request, `/admin/categories?error=${encodeURIComponent(errorMessage(error))}${editQuery}`);
+    return redirectToAdmin(`/admin/categories?error=${encodeURIComponent(errorMessage(error))}${editQuery}`);
   }
 }
 
@@ -59,10 +60,6 @@ function categoryFromForm(form: FormData): Category {
     sortOrder: Number(form.get("sortOrder") || 100),
     isVisible: form.get("isVisible") === "on"
   };
-}
-
-function redirectTo(request: NextRequest, path: string) {
-  return NextResponse.redirect(new URL(path, request.url));
 }
 
 function errorMessage(error: unknown) {
