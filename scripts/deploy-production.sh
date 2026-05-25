@@ -43,6 +43,10 @@ fi
 services="web"
 if [ "$RESTART_WORKER" = "1" ]; then
   services="$services worker"
+else
+  echo "Stopping unused worker service."
+  compose stop worker >/dev/null 2>&1 || true
+  compose rm -f worker >/dev/null 2>&1 || true
 fi
 
 echo "Deploying $BRANCH to $APP_DIR"

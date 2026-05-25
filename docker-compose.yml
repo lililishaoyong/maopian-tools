@@ -19,6 +19,8 @@ services:
     restart: unless-stopped
 
   worker:
+    profiles:
+      - worker
     build:
       context: .
     env_file:
