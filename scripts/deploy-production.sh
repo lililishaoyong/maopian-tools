@@ -45,8 +45,10 @@ if [ "$RESTART_WORKER" = "1" ]; then
   services="$services worker"
 else
   echo "Stopping unused worker service."
-  compose stop worker >/dev/null 2>&1 || true
-  compose rm -f worker >/dev/null 2>&1 || true
+  compose stop worker || true
+  compose rm -f worker || true
+  docker stop maopian-tools_worker_1 >/dev/null 2>&1 || true
+  docker rm maopian-tools_worker_1 >/dev/null 2>&1 || true
 fi
 
 echo "Deploying $BRANCH to $APP_DIR"
