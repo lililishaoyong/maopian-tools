@@ -1,17 +1,12 @@
 import { revalidatePath } from "next/cache";
-import { categories, resources, reviewItems, siteContent, xCreators, xSession } from "./seed";
+import { categories, resources, siteContent } from "./seed";
 import { getRedis } from "./redis";
-import type { Category, Resource, ReviewItem, SiteContent, XCrawlStatus, XCreatorSource, XSessionConfig } from "./types";
+import type { Category, Resource, SiteContent } from "./types";
 
 const KEYS = {
   categories: "maopian:categories",
   resources: "maopian:resources",
-  siteContent: "maopian:siteContent",
-  reviewItems: "review:items",
-  xCreators: "maopian:xCreators",
-  xSession: "maopian:xSession",
-  xSeenTweets: "maopian:xSeenTweets",
-  xCrawlStatus: "maopian:xCrawlStatus"
+  siteContent: "maopian:siteContent"
 };
 
 export async function getCategories({ includeHidden = false } = {}): Promise<Category[]> {
@@ -66,32 +61,6 @@ export async function getSiteContent(): Promise<SiteContent> {
   return readJson<SiteContent>(KEYS.siteContent, siteContent);
 }
 
-export async function getReviewItems(): Promise<ReviewItem[]> {
-  return readJson<ReviewItem[]>(KEYS.reviewItems, reviewItems);
-}
-
-export async function getXCreators(): Promise<XCreatorSource[]> {
-  const items = await readJson<XCreatorSource[]>(KEYS.xCreators, xCreators);
-  return items.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
-}
-
-export async function getXSession(): Promise<XSessionConfig> {
-  return readJson<XSessionConfig>(KEYS.xSession, xSession);
-}
-
-export async function getXSeenTweets(): Promise<string[]> {
-  return readJson<string[]>(KEYS.xSeenTweets, []);
-}
-
-export async function getXCrawlStatus(): Promise<XCrawlStatus> {
-  return readJson<XCrawlStatus>(KEYS.xCrawlStatus, emptyCrawlStatus());
-}
-
-export async function saveReviewItems(nextItems: ReviewItem[]) {
-  await writeJson(KEYS.reviewItems, nextItems);
-  safeRevalidatePath("/admin/review");
-}
-
 export async function saveCategories(nextCategories: Category[]) {
   await writeJson(KEYS.categories, nextCategories.sort((a, b) => a.sortOrder - b.sortOrder));
   revalidatePublicPages();
@@ -105,36 +74,6 @@ export async function saveResources(nextResources: Resource[]) {
 export async function saveSiteContent(nextContent: SiteContent) {
   await writeJson(KEYS.siteContent, nextContent);
   revalidatePublicPages();
-}
-
-export async function saveXCreators(nextCreators: XCreatorSource[]) {
-  await writeJson(KEYS.xCreators, nextCreators);
-  safeRevalidatePath("/admin/creators");
-}
-
-export async function saveXSession(nextSession: XSessionConfig) {
-  await writeJson(KEYS.xSession, nextSession);
-  safeRevalidatePath("/admin/creators");
-}
-
-export async function saveXSeenTweets(nextSeenTweets: string[]) {
-  await writeJson(KEYS.xSeenTweets, Array.from(new Set(nextSeenTweets)));
-}
-
-export async function saveXCrawlStatus(nextStatus: XCrawlStatus) {
-  await writeJson(KEYS.xCrawlStatus, {
-    ...nextStatus,
-    logs: nextStatus.logs.slice(-30),
-    updatedAt: new Date().toISOString()
-  });
-  safeRevalidatePath("/admin/creators");
-}
-
-export function parseList(value: FormDataEntryValue | null) {
-  return String(value || "")
-    .split(/[,，\n]/)
-    .map((item) => item.trim())
-    .filter(Boolean);
 }
 
 export function newId(prefix: string) {
@@ -153,16 +92,6 @@ export function assertUrl(value: string) {
     if (!["http:", "https:"].includes(url.protocol)) throw new Error("bad protocol");
   } catch {
     throw new Error("请输入合法的 http/https URL。");
-  }
-}
-
-export function creatorHandleFromUrl(value: string) {
-  try {
-    const url = new URL(value);
-    const handle = url.pathname.split("/").filter(Boolean)[0] || "";
-    return handle.replace(/^@/, "");
-  } catch {
-    return value.replace(/^@/, "").trim();
   }
 }
 
@@ -205,26 +134,6 @@ function safeRevalidatePath(path: string, type?: "page" | "layout") {
       revalidatePath(path);
     }
   } catch {
-    // Worker scripts run outside the Next.js request cache context.
+    // Some admin writes can run outside the Next.js request cache context.
   }
-}
-
-function emptyCrawlStatus(): XCrawlStatus {
-  return {
-    running: false,
-    phase: "idle",
-    mode: "incremental",
-    totalCreators: 0,
-    completedCreators: 0,
-    scanned: 0,
-    added: 0,
-    errors: 0,
-    proxyConfigured: false,
-    proxyMessage: "未配置代理。",
-    message: "尚未开始采集。",
-    logs: [],
-    startedAt: "",
-    updatedAt: "",
-    finishedAt: ""
-  };
 }

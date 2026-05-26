@@ -5,7 +5,6 @@ APP_DIR="${APP_DIR:-/opt/maopian-tools}"
 BRANCH="${BRANCH:-main}"
 SITE_URL="${SITE_URL:-}"
 SKIP_PULL="${SKIP_PULL:-0}"
-RESTART_WORKER="${RESTART_WORKER:-1}"
 
 cd "$APP_DIR"
 
@@ -40,20 +39,15 @@ if [ -z "$SITE_URL" ]; then
   exit 1
 fi
 
-services="web"
-if [ "$RESTART_WORKER" = "1" ]; then
-  services="$services worker"
-else
-  echo "Stopping unused worker service."
-  compose stop worker || true
-  compose rm -f worker || true
-  docker stop maopian-tools_worker_1 >/dev/null 2>&1 || true
-  docker rm maopian-tools_worker_1 >/dev/null 2>&1 || true
-fi
+echo "Stopping removed worker service if it exists."
+compose stop worker || true
+compose rm -f worker || true
+docker stop maopian-tools_worker_1 >/dev/null 2>&1 || true
+docker rm maopian-tools_worker_1 >/dev/null 2>&1 || true
 
 echo "Deploying $BRANCH to $APP_DIR"
-echo "Recreating: $services"
-compose up -d --build --force-recreate --no-deps $services
+echo "Recreating: web"
+compose up -d --build --force-recreate --no-deps web
 
 echo "Service status:"
 compose ps

@@ -1,4 +1,4 @@
-import type { Category, Resource, ReviewItem, SiteContent, XCreatorSource, XSessionConfig } from "./types";
+import type { Category, Resource, SiteContent } from "./types";
 
 export const siteContent: SiteContent = {
   brandName: "猫片",
@@ -152,52 +152,3 @@ export const resources: Resource[] = [
 ];
 
 export const tools = resources;
-
-export const xCreators: XCreatorSource[] = [
-  {
-    id: "creator-grgerwcwetwet",
-    name: "grgerwcwetwet",
-    profileUrl: "https://x.com/grgerwcwetwet",
-    handle: "grgerwcwetwet",
-    enabled: true,
-    lastCrawledAt: "",
-    lastTweetUrl: "",
-    createdAt: "2026-05-19T00:00:00.000Z"
-  }
-];
-
-export const xSession: XSessionConfig = {
-  cookieText: "",
-  updatedAt: "",
-  isConfigured: false
-};
-
-export const reviewItems: ReviewItem[] = [
-  {
-    id: "review-001",
-    source: "示例网站A",
-    title: "高清影视资源站更新",
-    url: "https://example.com/a",
-    risk: "low",
-    status: "pending",
-    collectedAt: "2026-05-14T08:00:00.000Z"
-  },
-  {
-    id: "review-002",
-    source: "示例账号B",
-    title: "新番动漫资源入口",
-    url: "https://example.com/b",
-    risk: "low",
-    status: "pending",
-    collectedAt: "2026-05-14T08:10:00.000Z"
-  },
-  {
-    id: "review-003",
-    source: "示例账号C",
-    title: "电影聚合站合集",
-    url: "https://example.com/c",
-    risk: "medium",
-    status: "pending",
-    collectedAt: "2026-05-14T08:20:00.000Z"
-  }
-];

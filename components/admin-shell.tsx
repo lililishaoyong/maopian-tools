@@ -2,14 +2,12 @@ import Link from "next/link";
 import type { Route } from "next";
 import { clsx } from "clsx";
 
-type AdminSection = "resources" | "categories" | "content" | "creators" | "review";
+type AdminSection = "resources" | "categories" | "content";
 
 const nav = [
   { href: "/admin/resources", label: "资源维护", key: "resources" },
   { href: "/admin/categories", label: "分类维护", key: "categories" },
-  { href: "/admin/content", label: "内容维护", key: "content" },
-  { href: "/admin/creators", label: "X 创作者采集", key: "creators" },
-  { href: "/admin/review", label: "内容审核", key: "review" }
+  { href: "/admin/content", label: "内容维护", key: "content" }
 ] as const;
 
 export function AdminShell({

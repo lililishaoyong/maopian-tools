@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const protectedPaths = ["/admin", "/api/admin", "/api/worker"];
+const protectedPaths = ["/admin", "/api/admin"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -35,7 +35,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/admin/:path*", "/api/worker/:path*"]
+  matcher: ["/admin/:path*", "/api/admin/:path*"]
 };
 
 async function sha256(value: string) {

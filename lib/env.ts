@@ -8,11 +8,7 @@ export const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH || "";
 
 export const adminPassword = process.env.ADMIN_PASSWORD || "";
 
-export const cronDailyCollect = process.env.CRON_DAILY_COLLECT || "0 2 * * *";
-
 export const baiduPushToken = process.env.BAIDU_PUSH_TOKEN || "";
-
-export const xCrawlProxyUrl = process.env.X_CRAWL_PROXY_URL || "";
 
 export function absoluteUrl(path = "/") {
   const safePath = path.startsWith("/") ? path : `/${path}`;
