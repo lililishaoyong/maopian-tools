@@ -8,13 +8,13 @@ export const metadata: Metadata = {
     default: "猫片 - 像撸猫一样惬意地找片",
     template: "%s | 猫片"
   },
-  description: "猫片是微信流量友好的影视资源聚合站，收录免费、高清、更新快的影视网站。",
+  description: "猫片整理片单灵感、观影工具和公开影视资讯入口，帮你更轻松地发现想看的内容。",
   alternates: {
     canonical: "/"
   },
   openGraph: {
     title: "猫片",
-    description: "像撸猫一样惬意地找片。",
+    description: "片单灵感、观影工具和公开影视资讯入口。",
     url: siteUrl,
     siteName: "猫片",
     type: "website"

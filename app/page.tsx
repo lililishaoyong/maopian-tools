@@ -36,7 +36,7 @@ export default async function HomePage() {
       <section className="mt-3 rounded-3xl border border-cream-200 bg-white p-3 shadow-sm">
         <div className="flex items-center gap-2 rounded-full border border-cream-200 bg-cream-50 px-3 py-2 text-xs text-cream-500">
           <Search className="size-4" />
-          搜索影视网站、工具、资源
+          搜索片单、工具、入口
           <span className="ml-auto text-coral-500">🐾</span>
         </div>
       </section>
@@ -83,8 +83,8 @@ export default async function HomePage() {
 
       <section className="mt-6">
         <div className="flex items-center justify-between">
-          <h2 className="flex items-center gap-1 text-sm font-black text-cream-900">⭐ 推荐网站</h2>
-          <span className="text-[11px] text-cream-500">{resources.length} 个资源站</span>
+          <h2 className="flex items-center gap-1 text-sm font-black text-cream-900">⭐ 推荐入口</h2>
+          <span className="text-[11px] text-cream-500">{resources.length} 个入口</span>
         </div>
         <div className="mt-3 space-y-3">
           {(featured.length ? featured : resources).slice(0, 5).map((resource) => (

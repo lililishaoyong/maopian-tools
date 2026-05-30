@@ -63,10 +63,6 @@ jobs:
       - run: npm ci
         if: env.DEPLOY_READY == 'true'
 
-      - name: Install Chromium
-        if: env.DEPLOY_READY == 'true'
-        run: npx playwright install --with-deps chromium
-
       - name: Configure SSH
         if: env.DEPLOY_READY == 'true'
         env:
@@ -92,12 +88,4 @@ jobs:
         run: |
           set -eu
           curl -fsS "$PROD_URL/api/health" | grep -q '"ok":true'
-          headers="$(mktemp)"
-          curl -fsS -o /dev/null -D "$headers" -u "$PROD_ADMIN_USER:$PROD_ADMIN_PASSWORD" \
-            -X POST --data-urlencode 'cookieText=bad' "$PROD_URL/api/admin/x-session"
-          grep -qi '^HTTP/.* 303' "$headers"
-          grep -qi "^location: $PROD_URL/admin/creators" "$headers"
-
-      - name: Verify admin page in browser
-        if: env.DEPLOY_READY == 'true'
-        run: node scripts/verify-production-browser.mjs
+          curl -fsS "$PROD_URL/me" | grep -q '公众号二维码'

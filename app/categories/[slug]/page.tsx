@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const category = categories.find((item) => item.slug === slug);
   return {
     title: category ? `${category.name} - 猫片` : "影视分类 - 猫片",
-    description: category?.description || "猫片影视资源分类页。",
+    description: category?.description || "猫片观影导航分类页。",
     alternates: {
       canonical: `/categories/${slug}`
     }
@@ -45,8 +45,8 @@ export default async function CategoryPage({ params }: Props) {
           <ArrowLeft className="size-5" />
         </Link>
         <div className="text-center">
-          <h1 className="text-base font-black text-cream-900">{category?.name || "影视网站"}</h1>
-          <p className="mt-0.5 text-[11px] text-cream-500">{categoryResources.length} 个站点</p>
+          <h1 className="text-base font-black text-cream-900">{category?.name || "影视入口"}</h1>
+          <p className="mt-0.5 text-[11px] text-cream-500">{categoryResources.length} 个入口</p>
         </div>
         <span className="grid size-10 place-items-center rounded-full bg-white text-cream-900 shadow-sm">
           <Search className="size-5" />
@@ -55,7 +55,7 @@ export default async function CategoryPage({ params }: Props) {
 
       <section className="mt-5 rounded-3xl border border-cream-200 bg-white p-4 shadow-sm">
         <p className="text-sm leading-6 text-cream-500">
-          {category?.description || "精选稳定好用的影视资源入口，一键站内打开。"}
+          {category?.description || "精选稳定好用的公开影视资讯入口。"}
         </p>
       </section>
 

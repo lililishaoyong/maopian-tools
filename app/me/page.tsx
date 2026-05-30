@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight, Clock, Download, Info, MessageSquare, Settings, Star } from "lucide-react";
+import { BookOpen, ChevronRight, Clock, Info, MessageSquare, Settings, Star } from "lucide-react";
 import { MaopianShell } from "@/components/maopian-shell";
 import { getResources, getSiteContent } from "@/lib/data";
 
@@ -31,21 +31,21 @@ export default async function MePage() {
             <p className="mt-1 text-xs text-cream-500">{content.slogan}</p>
           </div>
           <Link className="rounded-full bg-brand-100 px-3 py-2 text-xs font-bold text-brand-700" href="#follow">
-            登录/注册
+            查看二维码
           </Link>
         </div>
         <div className="mt-5 grid grid-cols-4 rounded-2xl bg-cream-50 py-3 text-center">
           <Metric value={resources.length} label="我的收藏" />
           <Metric value="28" label="浏览历史" />
-          <Metric value="5" label="关注网站" />
-          <Metric value="0" label="下载记录" />
+          <Metric value="5" label="关注入口" />
+          <Metric value="0" label="工具整理" />
         </div>
       </section>
 
       <section id="favorites" className="mt-4 overflow-hidden rounded-3xl border border-cream-200 bg-white shadow-sm">
         <MenuItem icon={<Star className="size-4" />} label="我的收藏" />
         <MenuItem icon={<Clock className="size-4" />} label="浏览历史" />
-        <MenuItem icon={<Download className="size-4" />} label="下载记录" />
+        <MenuItem icon={<BookOpen className="size-4" />} label="工具整理" />
         <MenuItem icon={<MessageSquare className="size-4" />} label="意见反馈" />
         <MenuItem icon={<Info className="size-4" />} label="关于猫片" />
       </section>
@@ -60,8 +60,8 @@ export default async function MePage() {
         </div>
         <div className="mt-4 flex items-center justify-between gap-4">
           <div className="text-xs leading-6 text-cream-500">
-            <p>热门网站更新提醒</p>
-            <p>不迷路，资源永相伴</p>
+            <p>片单灵感更新</p>
+            <p>工具与公开资讯入口</p>
           </div>
           <Image
             alt="公众号二维码"
@@ -72,7 +72,7 @@ export default async function MePage() {
           />
         </div>
         <a className="mt-5 block rounded-2xl bg-coral-500 px-4 py-3 text-center text-sm font-black text-white shadow-sm" href="#follow">
-          去关注公众号 🐾
+          查看公众号二维码
         </a>
       </section>
     </MaopianShell>

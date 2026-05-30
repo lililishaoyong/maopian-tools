@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resource = await getResourceBySlug(slug);
   return {
     title: resource ? `${resource.name} - 猫片` : "资源详情 - 猫片",
-    description: resource?.description || "猫片影视资源详情页。",
+    description: resource?.description || "猫片观影导航详情页。",
     alternates: {
       canonical: `/tools/${slug}`
     },

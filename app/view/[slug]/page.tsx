@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Download, Heart, Menu, Search, Share2 } from "lucide-react";
+import { ArrowLeft, Clock, Heart, Menu, Search, Share2 } from "lucide-react";
 import { getResourceBySlug, getResources, getSiteContent } from "@/lib/data";
 
 export const revalidate = 300;
@@ -93,7 +93,7 @@ export default async function WebViewPage({ params }: Props) {
           <Menu className="size-5" />
           外部打开
         </a>
-        <Action icon={<Download className="size-5" />} label="下载" />
+        <Action icon={<Clock className="size-5" />} label="记录" />
       </footer>
     </main>
   );

@@ -2,7 +2,7 @@ import { SiteShell } from "@/components/site-shell";
 
 export const metadata = {
   title: "联系方式",
-  description: "联系百宝箱。"
+  description: "联系猫片。"
 };
 
 export default function ContactPage() {
