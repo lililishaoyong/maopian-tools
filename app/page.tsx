@@ -1,20 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Briefcase, Cat, Clapperboard, Film, Search, Sparkles, Tv } from "lucide-react";
+import { Cat, Search } from "lucide-react";
 import { BrandMark, CatIcon, MaopianShell } from "@/components/maopian-shell";
 import { ResourceCard } from "@/components/resource-card";
 import { getCategories, getFeaturedResources, getResources, getSiteContent } from "@/lib/data";
+import { resolveLucideIcon } from "@/lib/lucide-icons";
 
 export const revalidate = 300;
-
-const iconMap = {
-  Clapperboard,
-  Film,
-  Tv,
-  Cat,
-  Sparkles,
-  Briefcase
-};
 
 export default async function HomePage() {
   const [content, categories, resources, featured] = await Promise.all([
@@ -68,7 +60,7 @@ export default async function HomePage() {
         </h2>
         <div className="mt-3 grid grid-cols-6 gap-2">
           {categories.map((category) => {
-            const Icon = iconMap[category.icon as keyof typeof iconMap] || Clapperboard;
+            const { Icon } = resolveLucideIcon(category.icon);
             return (
               <Link className="flex flex-col items-center gap-1.5 rounded-2xl bg-white px-1 py-2 text-center shadow-sm" href={`/categories/${category.slug}`} key={category.slug}>
                 <span className="grid size-9 place-items-center rounded-xl bg-brand-50 text-brand-700">

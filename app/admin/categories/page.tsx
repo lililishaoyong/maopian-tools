@@ -3,6 +3,7 @@ import type { Route } from "next";
 import { Eye, EyeOff, Pencil, Plus, Trash2 } from "lucide-react";
 import { AdminNotice, AdminShell } from "@/components/admin-shell";
 import { Badge } from "@/components/badge";
+import { IconNameField, IconPreview } from "@/components/icon-name-field";
 import { getCategories } from "@/lib/data";
 import type { Category } from "@/lib/types";
 
@@ -85,7 +86,9 @@ function CategoryRow({ category, editing }: { category: Category; editing: boole
           <div className="font-medium text-stone-950">{category.name}</div>
         </td>
         <td className="px-5 py-4 text-stone-500">/{category.slug}</td>
-        <td className="px-5 py-4 text-stone-500">{category.icon}</td>
+        <td className="px-5 py-4 text-stone-500">
+          <IconPreview compact name={category.icon} />
+        </td>
         <td className="px-5 py-4">
           <Badge tone={category.isVisible ? "brand" : "neutral"}>
             <span className="inline-flex items-center gap-1">
@@ -144,7 +147,7 @@ function CategoryForm({ category }: { category?: Category }) {
       <input name="edit" type="hidden" value={category?.id || ""} />
       <Field label="名称" name="name" required value={category?.name} />
       <Field label="Slug" name="slug" required value={category?.slug} />
-      <Field label="图标名" name="icon" value={category?.icon || "Clapperboard"} />
+      <IconNameField className="md:col-span-2" label="图标名" name="icon" value={category?.icon || "Clapperboard"} />
       <Field label="排序" name="sortOrder" type="number" value={String(category?.sortOrder ?? 100)} />
       <label className="grid gap-1 text-sm text-stone-600 md:col-span-2">
         描述
