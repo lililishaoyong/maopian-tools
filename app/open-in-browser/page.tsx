@@ -1,13 +1,24 @@
 import Image from "next/image";
 import { ExternalLink } from "lucide-react";
 
-export const metadata = {
-  title: "请在浏览器中打开",
-  description: "猫片访问提示：建议在浏览器中打开 miaopian.top。"
-};
-
 const displayHost = "miaopian.top";
 const primaryUrl = "https://miaopian.top";
+const pageUrl = `${primaryUrl}/open-in-browser`;
+
+export const metadata = {
+  title: "请在浏览器中打开",
+  description: "猫片访问提示：建议在浏览器中打开 miaopian.top。",
+  alternates: {
+    canonical: pageUrl
+  },
+  openGraph: {
+    title: "猫片访问提示",
+    description: "请点击右上角菜单，选择在浏览器打开，然后访问 miaopian.top。",
+    url: pageUrl,
+    siteName: "猫片",
+    type: "website"
+  }
+};
 
 export default function OpenInBrowserPage() {
   return (
