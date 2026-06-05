@@ -13,6 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/copyright",
     "/contact",
     "/me",
+    "/open-in-browser",
     ...categories.map((category) => `/categories/${category.slug}`),
     ...resources.flatMap((resource) => [`/tools/${resource.slug}`, `/view/${resource.slug}`])
   ].map((path) => ({
