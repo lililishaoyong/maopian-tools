@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { ExternalLink } from "lucide-react";
-import { siteUrl } from "@/lib/env";
 
 export const metadata = {
   title: "请在浏览器中打开",
@@ -8,6 +7,7 @@ export const metadata = {
 };
 
 const displayHost = "miaopian.top";
+const primaryUrl = "https://miaopian.top";
 
 export default function OpenInBrowserPage() {
   return (
@@ -29,7 +29,7 @@ export default function OpenInBrowserPage() {
         <section className="mt-8 space-y-4 text-lg leading-8 text-stone-800">
           <p>
             <span className="mr-4 font-semibold text-stone-950">主站：</span>
-            <a className="font-semibold text-sky-700 underline underline-offset-4" href={siteUrl}>
+            <a className="font-semibold text-sky-700 underline underline-offset-4" href={primaryUrl}>
               {displayHost}
             </a>
           </p>
@@ -46,7 +46,7 @@ export default function OpenInBrowserPage() {
 
           <a
             className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-3 text-base font-semibold text-white transition hover:bg-brand-700"
-            href={siteUrl}
+            href={primaryUrl}
           >
             打开 {displayHost}
             <ExternalLink className="size-4" aria-hidden="true" />
